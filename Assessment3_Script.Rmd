@@ -78,9 +78,10 @@ PlotAttempts <- ggplot(SummaryData_attempt_from_zone2, aes(x = Statistic, y = Su
   ggtitle("Figure 1")+
   theme_classic()
 
-# Make the plot interactive
+# Make the PlotAttempts interactive
 ggplotly(PlotAttempts)
 ```
+
 Figure 1. shows a large variability in 2-point shots taken by teams. The Giants (211) 2X more than the Sunshine Coast (91). 
 
 ## Step 5. Isolate and Plot Points
@@ -91,7 +92,7 @@ SummaryData_Points <-
 filter(SummaryData_All, Statistic == "points")
 ```
 
-```{r PlotAttempts}
+```{r PlotPoints}
 # Boxplot Points with ggplot
 PlotPoints <- ggplot(SummaryData_Points, aes(x = Statistic, y = Sum)) +
   geom_jitter(aes(colour = Team)) +
@@ -102,7 +103,7 @@ PlotPoints <- ggplot(SummaryData_Points, aes(x = Statistic, y = Sum)) +
   ggtitle("Figure 2")+
   theme_classic()
 
-# Make the plot interactive
+# Make the PlotPoints interactive
 ggplotly(PlotPoints)
 ```
 
