@@ -27,6 +27,8 @@ Before analysing the data the following packages will need to be loaded;
  
 ***viridis*** - colours graphs in a readable format for color blind individuals
 
+***flexdashboard*** - publish RMarkdown to a HTML dashboard
+
 ```{r PackagesData}
 # Load required packages
 library(here)

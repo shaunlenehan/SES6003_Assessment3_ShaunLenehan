@@ -1,0 +1,100 @@
+---
+title: "SES6003 Assessment 3 - Super Netball"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+
+output: 
+  flexdashboard::flex_dashboard:
+    theme: readable
+    logo: Figures/super_netball_logo.png
+    source_code: embed
+    social: menu
+    storyboard: true
+---
+
+## Aim of Analysis
+The aim of the following analysis is to determine if teams that take more shots from ***Zone 2*** score more points than teams that do not.
+
+## Step 1. Load The Required Packages
+
+Before analysing the data the following packages will need to be loaded;
+
+***here*** - constructs a path to the projects data file
+ 
+***tidyverse*** - a set of packages designed to work in together, packages needed within tidyverse include ***dtplyr*** and ***ggplot2***
+ 
+***knitr*** - provides a general purpose tool for generating reports
+
+***plotly*** - creates interactive web graphics in conjunction with ggplot2
+ 
+***viridis*** - colours graphs in a readable format for color blind individuals
+
+***flexdashboard*** - publish RMarkdown to a HTML dashboard
+
+
+```{r setup, include=FALSE}
+# Load required packages
+library(here)
+library(tidyverse)
+library(knitr)
+library(plotly)
+library(viridis)
+library(flexdashboard)
+library(DT)
+
+# Load in the data
+Dataset3_Assessment3 <- read.csv(here("Data/Dataset3_Assessment3.csv"))
+
+#Create new dataframe
+SummaryData_All <- Dataset3_Assessment3 %>%
+group_by(Team, Statistic) %>%
+summarise(Min = min(Total),
+Max = max(Total),
+Mean = mean(Total),
+SD = sd(Total),
+Sum = sum(Total))
+
+# Isolate with filter
+SummaryData_attempt_from_zone2 <-
+filter(SummaryData_All, Statistic == "attempt_from_zone2")
+
+# Isolate with filter
+SummaryData_Points <-
+filter(SummaryData_All, Statistic == "points")
+
+```
+
+## Step 2. Load the Data
+Load the data by using the read.csv function and the ***here*** package.
+
+### Figure 1. Attempts from Zone 2. 
+
+```{r PlotAttempts}
+# Boxplot Attempts with ggplot
+PlotAttempts <- ggplot(SummaryData_attempt_from_zone2, aes(x = Statistic, y = Sum)) +
+  geom_jitter(aes(colour = Team)) +
+  scale_colour_viridis_d() +
+  geom_boxplot(alpha = 0.3) +
+  xlab("Attempts from Zone 2") +
+  ylab("Sum of Shots Over Season") +
+  theme_classic()
+
+# Make the PlotAttempts interactive
+ggplotly(PlotAttempts)
+```
+
+### Figure 2. Points. 
+
+```{r PlotPoints}
+# Boxplot Points with ggplot
+PlotPoints <- ggplot(SummaryData_Points, aes(x = Statistic, y = Sum)) +
+  geom_jitter(aes(colour = Team)) +
+  scale_colour_viridis_d() +
+  geom_boxplot(alpha = 0.3) +
+  xlab("Points") +
+  ylab("Sum of Points Over Season") +
+  theme_classic()
+
+# Make the PlotPoints interactive
+ggplotly(PlotPoints)
+```
+
