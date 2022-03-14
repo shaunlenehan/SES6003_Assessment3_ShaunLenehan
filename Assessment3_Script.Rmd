@@ -1,0 +1,116 @@
+---
+title: "SES6003 Assessment 3 - Super Netball"
+author: "Shaun Lenehan"
+date: "14/03/2022"
+output: 
+  html_document:
+    code_folding: show
+---
+
+```{r setup, R.options=knitr::opts_chunk$set(warnings=FALSE, message=FALSE, fig.width=12, fig.height=8)}
+```
+
+## Aim of Analysis
+The aim of the following analysis is to determine if teams that take more shots from ***Zone 2*** score more points than teams that do not.
+
+## Step 1. Load The Required Packages
+
+Before analysing the data the following packages will need to be loaded;
+
+***here*** - constructs a path to the projects data file
+ 
+***tidyverse*** - a set of packages designed to work in together, packages needed within tidyverse include ***dtplyr*** and ***ggplot2***
+ 
+***knitr*** - provides a general purpose tool for generating reports
+
+***plotly*** - creates interactive web graphics in conjunction with ggplot2
+ 
+***viridis*** - colours graphs in a readable format for color blind individuals
+
+```{r PackagesData}
+# Load required packages
+library(here)
+library(tidyverse)
+library(knitr)
+library(plotly)
+library(viridis)
+library(flexdashboard)
+```
+
+## Step 2. Load the Data
+Load the data by using the read.csv function and the ***here*** package.
+
+```{r LoadData}
+# Load in the data
+Dataset3_Assessment3 <- read.csv(here("Data/Dataset3_Assessment3.csv"))
+```
+
+## Step 3. Run Summary Data
+Determine the Min, Max, Mean, SD and Sum for each variable in the ***Statistic*** column.
+```{r SummaryData}
+#Create new dataframe
+SummaryData_All <- Dataset3_Assessment3 %>%
+group_by(Team, Statistic) %>%
+summarise(Min = min(Total),
+Max = max(Total),
+Mean = mean(Total),
+SD = sd(Total),
+Sum = sum(Total))
+```
+
+## Step 4. Isolate Attempts from Zone 2 & Plot
+Use the filter function to determine how many shots teams are taking from the 2-point zone.
+```{r IsolateAttempts}
+# Isolate with filter
+SummaryData_attempt_from_zone2 <-
+filter(SummaryData_All, Statistic == "attempt_from_zone2")
+```
+
+Plot Attempts on a boxplot to visualize/rank teams. 
+```{r PlotAttempts}
+# Boxplot Attempts with ggplot
+PlotAttempts <- ggplot(SummaryData_attempt_from_zone2, aes(x = Statistic, y = Sum)) +
+  geom_jitter(aes(colour = Team)) +
+  scale_colour_viridis_d() +
+  geom_boxplot(alpha = 0.3) +
+  xlab("Attempts from Zone 2") +
+  ylab("Sum of Shots Over Season") +
+  ggtitle("Figure 1")+
+  theme_classic()
+
+# Make the plot interactive
+ggplotly(PlotAttempts)
+```
+Figure 1. shows a large variability in 2-point shots taken by teams. The Giants (211) 2X more than the Sunshine Coast (91). 
+
+## Step 5. Isolate and Plot Points
+By plotting points we can now get a idea of whether or not taking two points shots results in more total points. 
+```{r IsolatePoints}
+# Isolate with filter
+SummaryData_Points <-
+filter(SummaryData_All, Statistic == "points")
+```
+
+```{r PlotAttempts}
+# Boxplot Points with ggplot
+PlotPoints <- ggplot(SummaryData_Points, aes(x = Statistic, y = Sum)) +
+  geom_jitter(aes(colour = Team)) +
+  scale_colour_viridis_d() +
+  geom_boxplot(alpha = 0.3) +
+  xlab("Points") +
+  ylab("Sum of Points Over Season") +
+  ggtitle("Figure 2")+
+  theme_classic()
+
+# Make the plot interactive
+ggplotly(PlotPoints)
+```
+
+In Figure 2. you can see that over the season West Coast Fever scored the most points even though they took the 2nd least attempts from zone 2.
+
+## Insights
+Comparing Figure 1 & 2 suggest that attempting more shots from Zone 2 does not result in more points scored. The West Coast Fever are a good example of this (Attempts Rank - 7th / Points - 1st). This suggest that taking 2-point shots is not worth the effort!
+
+One limitation of this study is that it does consider accuracy. West Coast Fever may take limited attempts but be very successful when they do. 
+
+Completing Linear regression analysis would be the next step for this research. 
